@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Param, Delete, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Patch, Query } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { TaskI } from './task.model';
 import { optionalTask } from "./tasks.service";
 import { TaskStatus } from "./task.model";
+import { GetTasksFilterDto } from './dto/get-filter-dto-tasks';
 enum routeParams {
   urlParam_id = '/:id',
   id = 'id'
@@ -13,8 +14,14 @@ enum routeParams {
 export class TasksController {
   constructor(private taskService: TasksService) { }
   @Get()
-  getAllTasks() {
-    return this.taskService.getAllTasks();
+  getTasks(@Query() filterDto: GetTasksFilterDto) {
+
+    if (Object.keys(filterDto).length) {
+      return this.taskService.getTaskWithFilters(filterDto);
+    }
+    else {
+      return this.taskService.getAllTasks();
+    }
   }
   @Get(routeParams.urlParam_id)
   getSingleTask(@Param(routeParams.id) id: string): TaskI {

@@ -3,6 +3,7 @@ import { TaskI } from './task.model';
 import { TaskStatus } from "./task.model";
 import { v4 as uuidv4 } from 'uuid';
 import { CreateTaskDto } from './dto/create-task.dto';
+import { GetTasksFilterDto } from './dto/get-filter-dto-tasks';
 
 export type optionalTask = Partial<TaskI>;
 
@@ -21,6 +22,12 @@ export class TasksService {
       "description": "desc aaa",
       "status": TaskStatus.OPEN,
       "id": "715f5508-b02b-4566-bdee-203818a2934b"
+    },
+    {
+      "title": "channel",
+      "description": "progressing",
+      "status": TaskStatus.IN_PROGRESS,
+      "id": "82565e1e-0f07-440f-b192-9d5090213c51"
     }
   ];
 
@@ -30,6 +37,20 @@ export class TasksService {
 
   getTaskById(id: string): TaskI {
     return this.tasks.find(tsk => tsk.id === id);
+  }
+
+  getTaskWithFilters(filterdto: GetTasksFilterDto): TaskI[] {
+    const { status, search } = filterdto;
+    let tasks = this.getAllTasks();
+    if (status) {
+      tasks = tasks.filter(task => task.status === status);
+    }
+    if (search) {
+      tasks = tasks.filter(task =>
+        (task.title.includes(search) || task.description.includes(search))
+      )
+    }
+    return tasks;
   }
 
   createTask(createTaskDto: CreateTaskDto): TaskI {
