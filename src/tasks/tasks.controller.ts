@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Patch } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { TaskI } from './task.model';
-
+import { optionalTask } from "./tasks.service";
+import { TaskStatus } from "./task.model";
 enum routeParams {
   urlParam_id = '/:id',
   id = 'id'
@@ -30,6 +31,11 @@ export class TasksController {
     let deleted = this.taskService.deleteTask(id);
     console.log("the following task was delete", deleted);
     console.log("the array after deletion", this.taskService.getAllTasks())
+  }
+
+  @Patch(`${routeParams.urlParam_id}/status`)
+  updateTheTask(@Param(routeParams.id) id: string, @Body("status") status: TaskStatus) {
+    return this.taskService.patchTaskStatus(id, status);
   }
 
 }

@@ -4,6 +4,9 @@ import { TaskStatus } from "./task.model";
 import { v4 as uuidv4 } from 'uuid';
 import { CreateTaskDto } from './dto/create-task.dto';
 
+export type optionalTask = Partial<TaskI>;
+
+
 @Injectable()
 export class TasksService {
   private tasks: TaskI[] = [
@@ -44,5 +47,10 @@ export class TasksService {
     let taskToBeDeleated = this.tasks.find(task => task.id === id);
     this.tasks = this.tasks.filter(task => task.id !== id);
     return taskToBeDeleated;
+  }
+  patchTaskStatus(id: string, status: TaskStatus): TaskI {
+    let task = this.tasks.find(task => task.id === id);
+    task.status = status;
+    return task;
   }
 }
